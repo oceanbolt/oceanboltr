@@ -1,0 +1,27 @@
+Package: oceanboltr
+Title: Wrapper for Oceanbolt API (https://openapi.oceanbolt.com/)
+Version: 0.1.0.9000
+Date: 2020-12-08
+Authors@R: c(
+    person(given = "Alexander",
+           family = "Gedranovich",
+           role = c("aut", "cre", "ctr"),
+           email = "gedranovich@gmail.com"),
+    person(given = "Mads",
+           family = "Schou-Andreasen",
+           role = c("cph", "fnd", "rev"),
+           email = "info@oceanbolt.com"))
+Description: Provides full access to Ocenbolt (htps://oceanbolt.com) API.
+Depends:
+  R (>= 3.6.0)
+Imports:
+  httr (>= 1.4.0),
+  jsonlite (>= 1.7.0),
+  data.table (>= 1.13.0)
+Suggests:
+  keyring (>= 1.1.0)
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1

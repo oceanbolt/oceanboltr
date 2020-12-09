@@ -1,0 +1,5 @@
+^oceanboltr\.Rproj$
+^\.Rproj\.user$
+^LICENSE\.md$
+^\.lintr$
+.travis.yml
