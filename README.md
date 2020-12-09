@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/oceanbolt/oceanboltr.svg)](https://travis-ci.com/oceanbolt/oceanboltr)
+
 # R Wrapper for Oceanbolt API
 
 This is an R wrapper for the Oceanbolt API.
