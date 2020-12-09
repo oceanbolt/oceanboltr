@@ -4,3 +4,6 @@ addons:
   apt:
     packages:
     - libsodium-dev
+cache:
+  apt: true
+  packages: true
