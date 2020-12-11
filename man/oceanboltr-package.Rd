@@ -6,7 +6,7 @@
 \alias{oceanboltr-package}
 \title{oceanboltr: Wrapper for Oceanbolt API (https://openapi.oceanbolt.com/)}
 \description{
-Provides full access to Oceanbolt (https://openapi.oceanbolt.com/) API.
+Provides full access to Oceanbolt API (https://openapi.oceanbolt.com/).
 }
 \details{
 Wrapper for Oceanbolt API (https://openapi.oceanbolt.com/)

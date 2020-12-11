@@ -1,21 +1,13 @@
 [![Build Status](https://travis-ci.com/oceanbolt/oceanboltr.svg)](https://travis-ci.com/oceanbolt/oceanboltr)
 [![Codecov test coverage](https://codecov.io/gh/oceanbolt/oceanboltr/branch/development/graph/badge.svg)](https://codecov.io/gh/oceanbolt/oceanboltr?branch=development)
+[![Code size](https://img.shields.io/github/languages/code-size/oceanbolt/oceanboltr.svg)](https://github.com/oceanbolt/oceanboltr)
+[![CRAN status](https://www.r-pkg.org/badges/version/oceanboltr)](https://CRAN.R-project.org/package=oceanboltr)
+[![CRAN Downloads](http://cranlogs.r-pkg.org/badges/grand-total/oceanboltr?color=blue)](https://cran.r-project.org/package=oceanboltr)
+
 
 # R Wrapper for Oceanbolt API
 
 This is an R wrapper for the Oceanbolt API.
-
-## Goal
-
-We should create a wrapper for the REST API in R which exposes wrapper functions for each of the endpoints.
-The api should return data in the form of tibbles (or maybe data.tables?) Whatever is easier.
-
-Each function should have a short documentation about the params and the response.
-
-Library name **oceanboltr**
-
-The wrapper should be packaged into a full R library which should be published to CRAN. 
-The git repo should have ci/cd functionality to automatically build and release a new version whenever we tag a commit.
 
 ## How to Install
 
@@ -66,41 +58,6 @@ token <- "<YOUR_OCEANBOLT_TOKEN>"
 registerToken(token, type = "keyring")
 ```
 
+## Usage
 
-## Endpoints
-
-The following endpoints should be converted:
-
-#### List endpoints:
-| Method | URL   |      Description      |  R Function name |
-|----------|----------|:-------------:|------:|
-| GET | https://beta.api.oceanbolt.com/v2/entities/countries | returns list of countries | listCountries() |
-| GET | https://beta.api.oceanbolt.com/v2/entities/zones | returns list of zones | listZones() |
-| GET | https://beta.api.oceanbolt.com/v2/entities/segments | returns list of segments | listSegments() |
-| GET | https://beta.api.oceanbolt.com/v2/entities/regions | returns list of regions | listRegions() |
-| GET | https://beta.api.oceanbolt.com/v2/entities/commodities | returns list of commodities | listCommodities() |
-
-#### Data endpoints:
-
-| Method | Doc URL   |      Description      |  R Function name |
-|----------|----------|:-------------:|------:|
-| POST | https://openapi.oceanbolt.com/#operation/getTonnageZone | returns tonnage zone data | getTonnageZoneCount() |
-| POST | https://openapi.oceanbolt.com/#tag/fleetspeed | returns fleet speed data | getFleetSpeed() |
-| POST | https://openapi.oceanbolt.com/#tag/fleetspeed | returns fleet speed data | getFleetSpeed() |
-| POST | https://openapi.oceanbolt.com/#operation/postTradeflowLadenLegs | returns individual trade flows | getTradeFlows()
-| POST | https://openapi.oceanbolt.com/#operation/postTradeflowDailyTimeseries | returns trade flows timeseries | getTradeFlowsTimeseries()
-
-
-## Error handling
-
-When the API returns status code > 400 the error code should be clearly printed in the console
-
-## Function signature for data functions
-
-The data endpoint functions should have default values for all parameters, which are in turn submitted is payload.
-
-The signature should ideally be `{r} getTradeFlows(segment=c("panamax","supramax"),fromDate="2020-01-01")`
-
-I have drafted up a very quick proof of concept R script with ideas and examples of how the function signatures could be. This is available in this repo.
-
-
+TODO

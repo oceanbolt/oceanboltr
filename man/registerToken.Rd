@@ -4,7 +4,7 @@
 \alias{registerToken}
 \title{Registers Oceanbolt API token for further use}
 \usage{
-registerToken(token, type = c("plain", "keyring"))
+registerToken(token, type = "plain")
 }
 \arguments{
 \item{token}{Raw value of the Oceanbolt API token}

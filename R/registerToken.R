@@ -22,15 +22,20 @@
 #' }
 #'
 #' @export
-registerToken <- function(token, type = c("plain", "keyring")) {
+registerToken <- function(token, type = "plain") {
 
   # Checks inputs
-  if (missing(token)) {
+  if (missing(token) | is.null(token) | is.na(token) | token == "") {
     stop("You should provide valid token!")
+  }
+
+  if (missing(type) | is.null(type) | is.na(type)) {
+    stop("Token registration type should be one of 'plain' or 'keyring'!")
   }
 
   # If there are multiple options, then selects the first option
   if (length(type) > 1) {
+    warning("Multiple token types are provided, first option will be used!")
     type <- type[1]
   }
 

@@ -75,6 +75,5 @@ listEntities <- function(entity = c(
     encoding = "utf8"
   )
   output <- setDT(fromJSON(parsed)[[entity]])
-
-  return(output)
+  output
 }

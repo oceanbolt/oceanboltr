@@ -69,20 +69,71 @@ getFleetSpeed <- function(zoneId = 16,
     ))
   }
 
+  # Unifies parameters letter cases
+  segment <- tolower(segment)
+  subSegment <- tolower(subSegment)
+  direction <- toupper(direction)
+  ladenStatus <- tolower(ladenStatus)
+  portStatus <- tolower(portStatus)
+
   # Checks parameters validity
-  # if ()
-  # listZones()$zoneId
-
-
-
-  # Checks parameters (transforms segments to sub-segments)
-  if (length(segment) == 0) {
-    segment <- c("shortsea", "handysize", "supramax", "panamax", "capesize")
+  if (!all(zoneId %in% listZones()$zoneId)) {
+    stop(paste0(
+      "Not a valid zoneId! ",
+      "Please, check 'listZones()' for valid values."
+    ))
   }
+
+  if (!all(segment %in% unique(listSegments()$segmentKey))) {
+    stop(paste0(
+      "Not a valid segment! ",
+      "Please, check 'listSegments()' for valid values."
+    ))
+  }
+
+  if (!all(subSegment %in% unique(listSegments()$subSegmentKey))) {
+    stop(paste0(
+      "Not a valid sub-segment! ",
+      "Please, check 'listSegments()' for valid values."
+    ))
+  }
+
+  if (!all(direction %in% c(
+    "NNE", "ENE", "ESE", "SSE",
+    "SSW", "WSW", "WNW", "NNW"
+  ))) {
+    stop(paste0(
+      "Not a valid direction! Should be in the list of values: ",
+      "('NNE', 'ENE', 'ESE', 'SSE', 'SSW', 'WSW', 'WNW', 'NNW')"
+    ))
+  }
+
+  if (!all(ladenStatus %in% c("laden", "ballast"))) {
+    stop(paste0(
+      "Not a valid laden status! Should be in the list of values: ",
+      "('laden', 'ballast')"
+    ))
+  }
+
+  if (!all(portStatus %in% c("in_port", "at_sea"))) {
+    stop(paste0(
+      "Not a valid port status! Should be in the list of values: ",
+      "('in_port', 'at_sea')"
+    ))
+  }
+
+  # Avoids conflict with columns' names from listSegment() output
   .segment <- segment
+  .subSegment <- subSegment
+
+  # Transforms segments to sub-segments
+  if (length(.segment) == 0) {
+    .segment <- c("shortsea", "handysize", "supramax", "panamax", "capesize")
+  }
+
   selectedSubSegments <- listSegments()[segmentKey %in% .segment]
-  if (length(subSegment) > 0) {
-    selectedSubSegments <- selectedSubSegments[subSegmentKey %in% subSegment]
+  if (length(.subSegment) > 0) {
+    selectedSubSegments <- selectedSubSegments[subSegmentKey %in% .subSegment]
   }
   selectedSubSegments <- selectedSubSegments$subSegmentKey
 

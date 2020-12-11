@@ -36,5 +36,5 @@ baseApiUrl <- "https://beta.api.oceanbolt.com/v2"
     }
   }
 
-  return(invisible(NULL))
+  invisible(NULL)
 }
