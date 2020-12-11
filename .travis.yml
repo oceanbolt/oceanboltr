@@ -1,7 +1,6 @@
 language: r
 os:
   - linux
-  - osx
 addons:
   apt:
     packages:
@@ -11,9 +10,3 @@ cache:
   packages: true
 after_success:
   - Rscript -e 'covr::codecov()'
-jobs:
-  include:
-    - os: linux
-    - os: osx
-  allow_failures:
-    - os: osx
