@@ -1,5 +1,8 @@
 language: r
-os: linux
+os:
+  - linux
+  - osx
+  - windows
 addons:
   apt:
     packages:
