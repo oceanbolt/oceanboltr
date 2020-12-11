@@ -29,14 +29,14 @@ registerToken <- function(token, type = "plain") {
     stop("You should provide valid token!")
   }
 
-  if (missing(type) | is.null(type) | is.na(type)) {
-    stop("Token registration type should be one of 'plain' or 'keyring'!")
-  }
-
   # If there are multiple options, then selects the first option
   if (length(type) > 1) {
     warning("Multiple token types are provided, first option will be used!")
     type <- type[1]
+  }
+
+  if (is.null(type) | is.na(type)) {
+    stop("Token registration type should be one of 'plain' or 'keyring'!")
   }
 
   if (!type %in% c("plain", "keyring")) {
