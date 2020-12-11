@@ -1,5 +1,7 @@
 #' Retrieves all the countries that are available in the tradeflow database
 #'
+#' @param ... Extra parameters passed to \code{\link{listEntities}()}
+#'
 #' @details
 #' See \url{https://openapi.oceanbolt.com/#operation/listCountries} for details.
 #'
@@ -12,6 +14,6 @@
 #' }
 #'
 #' @export
-listCountries <- function() {
-  listEntities("countries")
+listCountries <- function(...) {
+  listEntities("countries", ...)
 }

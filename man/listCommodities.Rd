@@ -4,7 +4,10 @@
 \alias{listCommodities}
 \title{Retrieves a list of all commodities available in the trade flow database}
 \usage{
-listCommodities()
+listCommodities(...)
+}
+\arguments{
+\item{...}{Extra parameters passed to \code{\link{listEntities}()}}
 }
 \value{
 Data.table with available commodities

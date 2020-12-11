@@ -4,7 +4,10 @@
 \alias{listSegments}
 \title{Retrives list of available segments in database}
 \usage{
-listSegments()
+listSegments(...)
+}
+\arguments{
+\item{...}{Extra parameters passed to \code{\link{listEntities}()}}
 }
 \value{
 Data.table with available segments

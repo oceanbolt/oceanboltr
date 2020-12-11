@@ -1,5 +1,4 @@
 [![Build Status](https://travis-ci.com/oceanbolt/oceanboltr.svg)](https://travis-ci.com/oceanbolt/oceanboltr)
-
 [![Codecov test coverage](https://codecov.io/gh/oceanbolt/oceanboltr/branch/development/graph/badge.svg)](https://codecov.io/gh/oceanbolt/oceanboltr?branch=development)
 
 # R Wrapper for Oceanbolt API

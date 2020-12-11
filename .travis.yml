@@ -7,3 +7,5 @@ addons:
 cache:
   apt: true
   packages: true
+after_success:
+  - Rscript -e 'covr::codecov()'

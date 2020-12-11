@@ -1,5 +1,7 @@
 #' Retrieves a list of all commodities available in the trade flow database
 #'
+#' @param ... Extra parameters passed to \code{\link{listEntities}()}
+#'
 #' @details
 #' See \url{https://openapi.oceanbolt.com/#operation/listCommodities} for
 #'  details.
@@ -13,6 +15,6 @@
 #' }
 #'
 #' @export
-listCommodities <- function() {
-  listEntities("commodities")
+listCommodities <- function(...) {
+  listEntities("commodities", ...)
 }

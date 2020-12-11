@@ -4,7 +4,10 @@
 \alias{listRegions}
 \title{Retrieves all the regions that are available in the tradeflow database}
 \usage{
-listRegions()
+listRegions(...)
+}
+\arguments{
+\item{...}{Extra parameters passed to \code{\link{listEntities}()}}
 }
 \value{
 Data.table with available regions

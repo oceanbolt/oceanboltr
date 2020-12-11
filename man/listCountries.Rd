@@ -4,7 +4,10 @@
 \alias{listCountries}
 \title{Retrieves all the countries that are available in the tradeflow database}
 \usage{
-listCountries()
+listCountries(...)
+}
+\arguments{
+\item{...}{Extra parameters passed to \code{\link{listEntities}()}}
 }
 \value{
 Data.table with available countries

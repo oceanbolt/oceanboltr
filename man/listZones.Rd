@@ -4,7 +4,10 @@
 \alias{listZones}
 \title{Retrieves all available tonnage zones}
 \usage{
-listZones()
+listZones(...)
+}
+\arguments{
+\item{...}{Extra parameters passed to \code{\link{listEntities}()}}
 }
 \value{
 Data.table with available tonnage regions

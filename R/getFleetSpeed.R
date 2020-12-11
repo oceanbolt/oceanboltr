@@ -24,6 +24,8 @@
 #'
 #' @param excludeMpv Boolean, whether to exclude mpv vessels from the counts.
 #'
+#' @param token Oceanbolt API token, read from the environment by default
+#'
 #' @details
 #' See \url{https://openapi.oceanbolt.com/#operation/getFleetSPeed} for details.
 #'
@@ -41,26 +43,24 @@
 #'
 #' @export
 getFleetSpeed <- function(zoneId = 16,
-                          segment = c("shortsea", "handysize", "supramax",
-                                       "panamax", "capesize"),
+                          segment = c(
+                            "shortsea", "handysize", "supramax",
+                            "panamax", "capesize"
+                          ),
                           subSegment = c(),
-                          direction = c("NNE", "ENE", "ESE", "SSE", "SSW",
-                                        "WSW", "WNW", "NNW"),
+                          direction = c(
+                            "NNE", "ENE", "ESE", "SSE", "SSW",
+                            "WSW", "WNW", "NNW"
+                          ),
                           ladenStatus = c("laden", "ballast"),
                           portStatus = c("in_port", "at_sea"),
-                          excludeMpv = TRUE) {
+                          excludeMpv = TRUE,
+                          token = Sys.getenv("OCEANBOLT_TOKEN")) {
 
   # Due to NSE notes in R CMD check / devtools::check()
-  `:=` <- `segmentKey` <- `subSegmentKey` <- NULL
+  `segmentKey` <- `subSegmentKey` <- `:=` <- NULL
 
   # Checks options
-  baseUrl <- getOption("oceanbolt.base_url")
-  token <- getOption("oceanbolt.token")
-
-  if (is.null(baseUrl)) {
-    stop(paste0("Please, reload package with `library(oceanboltr).`"))
-  }
-
   if (is.null(token)) {
     stop(paste0(
       "Please, register API token before using this function! ",
@@ -70,28 +70,33 @@ getFleetSpeed <- function(zoneId = 16,
   }
 
   # Checks parameters validity
-  # TODO
+  # if ()
+  # listZones()$zoneId
+
+
 
   # Checks parameters (transforms segments to sub-segments)
   if (length(segment) == 0) {
     segment <- c("shortsea", "handysize", "supramax", "panamax", "capesize")
   }
   .segment <- segment
-  selected_subsegments <- listSegments()[segmentKey %in% .segment]
+  selectedSubSegments <- listSegments()[segmentKey %in% .segment]
   if (length(subSegment) > 0) {
-    selected_subsegments <- selected_subsegments[subSegmentKey %in% subSegment]
+    selectedSubSegments <- selectedSubSegments[subSegmentKey %in% subSegment]
   }
+  selectedSubSegments <- selectedSubSegments$subSegmentKey
 
   # Queries API
   response <- POST(
-    paste0(baseUrl, "/tonnage/speed"),
+    paste0(baseApiUrl, "/tonnage/speed"),
     add_headers(Authorization = paste0("Bearer ", token)),
     timeout(30),
     body = list(
       zoneId = zoneId,
-      subSegment = selected_subsegments,
+      subSegment = selectedSubSegments,
       direction = direction,
       ladenStatus = ladenStatus,
+      portStatus = portStatus,
       excludeMpv = excludeMpv,
       format = "json"
     ),
@@ -100,17 +105,17 @@ getFleetSpeed <- function(zoneId = 16,
 
   if (http_error(response)) {
     err <- content(response,
-                   as = "parsed", type = "application/json",
-                   encoding = "utf8"
+      as = "parsed", type = "application/json",
+      encoding = "utf8"
     )
     stop(sprintf("Failed with error %d - %s", err$code, err$message))
   }
 
   parsed <- content(response,
-                    as = "text", type = "application/json",
-                    encoding = "utf8"
+    as = "text", type = "application/json",
+    encoding = "utf8"
   )
-  output <- setDT(fromJSON(parsed)[["tonnageZoneCounts"]])
+  output <- setDT(fromJSON(parsed)[["fleetSpeedData"]])
   if (nrow(output) > 0) {
     output[, date := as.Date(date)]
   }

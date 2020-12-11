@@ -1,5 +1,7 @@
 #' Retrives list of available segments in database
 #'
+#' @param ... Extra parameters passed to \code{\link{listEntities}()}
+#'
 #' @details
 #' See \url{https://openapi.oceanbolt.com/#operation/listSegments} for details.
 #'
@@ -12,6 +14,6 @@
 #' }
 #'
 #' @export
-listSegments <- function() {
-  listEntities("segments")
+listSegments <- function(...) {
+  listEntities("segments", ...)
 }

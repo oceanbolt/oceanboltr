@@ -6,12 +6,15 @@
 in the trade flow database}
 \usage{
 listEntities(
-  entity = c("countries", "regions", "commodities", "zones", "segments")
+  entity = c("countries", "regions", "commodities", "zones", "segments"),
+  token = Sys.getenv("OCEANBOLT_TOKEN")
 )
 }
 \arguments{
 \item{entity}{Type of the entity, one of \code{countries}, \code{regions},
 \code{commodities}, \code{zones}, \code{segments}}
+
+\item{token}{Oceanbolt API token}
 }
 \value{
 Data.table with available entities

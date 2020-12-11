@@ -46,11 +46,11 @@ registerToken <- function(token, type = c("plain", "keyring")) {
       ))
     } else {
       suppressWarnings(
-        keyring::key_set_with_value("oceanbolt", password = token)
+        keyring::key_set_with_value("OCEANBOLT_TOKEN", password = token)
       )
     }
   }
-  options(oceanbolt.token = token)
+  Sys.setenv("OCEANBOLT_TOKEN" = token)
 
   return(invisible(TRUE))
 }

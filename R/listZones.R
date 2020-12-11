@@ -1,5 +1,7 @@
 #' Retrieves all available tonnage zones
 #'
+#' @param ... Extra parameters passed to \code{\link{listEntities}()}
+#'
 #' @details
 #' See \url{https://openapi.oceanbolt.com/#operation/listTonnageZones} for
 #' details.
@@ -13,6 +15,6 @@
 #' }
 #'
 #' @export
-listZones <- function() {
-  listEntities("zones")
+listZones <- function(...) {
+  listEntities("zones", ...)
 }
