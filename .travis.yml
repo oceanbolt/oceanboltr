@@ -4,6 +4,7 @@ r:
   - release
 os:
   - linux
+  - osx
 addons:
   apt:
     packages:
