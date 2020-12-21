@@ -6,7 +6,7 @@
 in the trade flow database}
 \usage{
 listEntities(
-  entity = c("countries", "regions", "commodities", "zones", "segments"),
+  entity = c("countries", "regions", "commodities", "zones", "segments", "ports"),
   token = Sys.getenv("OCEANBOLT_TOKEN")
 )
 }

@@ -5,7 +5,7 @@
 #'
 #' @importFrom data.table setDT
 #' @importFrom jsonlite fromJSON
-#' @importFrom httr GET POST add_headers http_error content timeout
+#' @importFrom httr RETRY add_headers http_error content status_code timeout
 "_PACKAGE"
 
 #' Base Oceanbolt API URL
@@ -26,6 +26,13 @@ baseApiUrl <- "https://beta.api.oceanbolt.com/v2"
 
   # Due to NSE notes in R CMD check / devtools::check()
   libname <- pkgname <- NULL
+
+  # Sets package settings
+  Sys.setenv("OCEANBOLT_RETRY_TIMEOUT" = 30)
+  Sys.setenv("OCEANBOLT_RETRY_TIMES" = 3)
+  Sys.setenv("OCEANBOLT_RETRY_PAUSE_BASE" = 10)
+  Sys.setenv("OCEANBOLT_RETRY_PAUSE_MIN" = 10)
+  Sys.setenv("OCEANBOLT_RETRY_PAUSE_CAP" = 90)
 
   # Checks if API token was already registered with 'keyring'
   if (requireNamespace("keyring", quietly = TRUE)) {

@@ -66,7 +66,7 @@ getFleetSpeed <- function(zoneId = 16,
       "Please, register API token before using this function! ",
       "Use `registerToken(\"<YOUR_OCEANBOLT_TOKEN>\")`.\n",
       "See `?registerToken` for more details."
-    ))
+    ), call. = FALSE)
   }
 
   # Unifies parameters letter cases
@@ -81,21 +81,21 @@ getFleetSpeed <- function(zoneId = 16,
     stop(paste0(
       "Not a valid zoneId! ",
       "Please, check 'listZones()' for valid values."
-    ))
+    ), call. = FALSE)
   }
 
   if (!all(segment %in% unique(listSegments()$segmentKey))) {
     stop(paste0(
       "Not a valid segment! ",
       "Please, check 'listSegments()' for valid values."
-    ))
+    ), call. = FALSE)
   }
 
   if (!all(subSegment %in% unique(listSegments()$subSegmentKey))) {
     stop(paste0(
       "Not a valid sub-segment! ",
       "Please, check 'listSegments()' for valid values."
-    ))
+    ), call. = FALSE)
   }
 
   if (!all(direction %in% c(
@@ -105,21 +105,21 @@ getFleetSpeed <- function(zoneId = 16,
     stop(paste0(
       "Not a valid direction! Should be in the list of values: ",
       "('NNE', 'ENE', 'ESE', 'SSE', 'SSW', 'WSW', 'WNW', 'NNW')"
-    ))
+    ), call. = FALSE)
   }
 
   if (!all(ladenStatus %in% c("laden", "ballast"))) {
     stop(paste0(
       "Not a valid laden status! Should be in the list of values: ",
       "('laden', 'ballast')"
-    ))
+    ), call. = FALSE)
   }
 
   if (!all(portStatus %in% c("in_port", "at_sea"))) {
     stop(paste0(
       "Not a valid port status! Should be in the list of values: ",
       "('in_port', 'at_sea')"
-    ))
+    ), call. = FALSE)
   }
 
   # Avoids conflict with columns' names from listSegment() output
@@ -138,10 +138,10 @@ getFleetSpeed <- function(zoneId = 16,
   selectedSubSegments <- selectedSubSegments$subSegmentKey
 
   # Queries API
-  response <- POST(
-    paste0(baseApiUrl, "/tonnage/speed"),
+  response <- RETRY(
+    "POST",
+    url = paste0(baseApiUrl, "/tonnage/speed"),
     add_headers(Authorization = paste0("Bearer ", token)),
-    timeout(30),
     body = list(
       zoneId = zoneId,
       subSegment = selectedSubSegments,
@@ -151,7 +151,12 @@ getFleetSpeed <- function(zoneId = 16,
       excludeMpv = excludeMpv,
       format = "json"
     ),
-    encode = "json"
+    encode = "json",
+    timeout(as.numeric(Sys.getenv("OCEANBOLT_RETRY_TIMEOUT", unset = 30))),
+    times = as.numeric(Sys.getenv("OCEANBOLT_RETRY_TIMES", unset = 3)),
+    pause_base = as.numeric(Sys.getenv("OCEANBOLT_RETRY_PAUSE_BASE", unset = 1)),
+    pause_min = as.numeric(Sys.getenv("OCEANBOLT_RETRY_PAUSE_MIN", unset = 1)),
+    pause_cap = as.numeric(Sys.getenv("OCEANBOLT_RETRY_PAUSE_CAP", unset = 60))
   )
 
   if (http_error(response)) {
@@ -159,7 +164,10 @@ getFleetSpeed <- function(zoneId = 16,
       as = "parsed", type = "application/json",
       encoding = "utf8"
     )
-    stop(sprintf("Failed with error %d - %s", err$code, err$message))
+    stop(sprintf(
+      "Failed with HTTP code %d. Oceanbolt exit code %d - %s",
+      status_code(response), err$code, err$message
+    ), call. = FALSE)
   }
 
   parsed <- content(response,

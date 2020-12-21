@@ -13,7 +13,7 @@
 #' @return Data.table with available entities
 listEntities <- function(entity = c(
                            "countries", "regions", "commodities",
-                           "zones", "segments"
+                           "zones", "segments", "ports"
                          ), token = Sys.getenv("OCEANBOLT_TOKEN")) {
 
   # Checks inputs
@@ -21,8 +21,9 @@ listEntities <- function(entity = c(
     stop(
       paste0(
         "You should provide entity type of 'countries', 'regions',",
-        "'commodities', 'zones' or 'segments'!"
-      )
+        "'commodities', 'zones', 'segments' or 'ports'!"
+      ),
+      call. = FALSE
     )
   }
 
@@ -36,14 +37,12 @@ listEntities <- function(entity = c(
 
   if (!entity %in% c(
     "countries", "regions", "commodities",
-    "zones", "segments"
+    "zones", "segments", "ports"
   )) {
-    stop(
-      paste0(
-        "Entity type should be one of: 'countries', 'regions',",
-        "'commodities', 'zones' or 'segments'!"
-      )
-    )
+    stop(paste0(
+      "You should provide entity type of 'countries', 'regions',",
+      "'commodities', 'zones', 'segments' or 'ports'!"
+    ), call. = FALSE)
   }
 
   # Checks options
@@ -56,10 +55,15 @@ listEntities <- function(entity = c(
   }
 
   # Queries API
-  response <- GET(
-    paste0(baseApiUrl, "/entities/", entity),
+  response <- RETRY(
+    "GET",
+    url = paste0(baseApiUrl, "/entities/", entity),
     add_headers(Authorization = paste0("Bearer ", token)),
-    timeout(30)
+    timeout(as.numeric(Sys.getenv("OCEANBOLT_RETRY_TIMEOUT", unset = 30))),
+    times = as.numeric(Sys.getenv("OCEANBOLT_RETRY_TIMES", unset = 3)),
+    pause_base = as.numeric(Sys.getenv("OCEANBOLT_RETRY_PAUSE_BASE", unset = 1)),
+    pause_min = as.numeric(Sys.getenv("OCEANBOLT_RETRY_PAUSE_MIN", unset = 1)),
+    pause_cap = as.numeric(Sys.getenv("OCEANBOLT_RETRY_PAUSE_CAP", unset = 60))
   )
 
   if (http_error(response)) {
@@ -67,7 +71,12 @@ listEntities <- function(entity = c(
       as = "parsed", type = "application/json",
       encoding = "utf8"
     )
-    stop(sprintf("Failed with error %d - %s", err$code, err$message))
+    stop(sprintf(
+      "Failed with HTTP code %d. Oceanbolt exit code %d - %s",
+      status_code(response), err$code, err$message
+    ),
+    call. = FALSE
+    )
   }
 
   parsed <- content(response,

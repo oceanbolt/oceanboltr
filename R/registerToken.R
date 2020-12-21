@@ -26,21 +26,27 @@ registerToken <- function(token, type = "plain") {
 
   # Checks inputs
   if (missing(token) | is.null(token) | is.na(token) | token == "") {
-    stop("You should provide valid token!")
+    stop("You should provide valid token!", call. = FALSE)
   }
 
   # If there are multiple options, then selects the first option
   if (length(type) > 1) {
-    warning("Multiple token types are provided, first option will be used!")
+    warning("Multiple token types are provided, first option will be used!",
+      call. = FALSE
+    )
     type <- type[1]
   }
 
   if (is.null(type) | is.na(type)) {
-    stop("Token registration type should be one of 'plain' or 'keyring'!")
+    stop("Token registration type should be one of 'plain' or 'keyring'!",
+      call. = FALSE
+    )
   }
 
   if (!type %in% c("plain", "keyring")) {
-    stop("Token registration type should be one of 'plain' or 'keyring'.")
+    stop("Token registration type should be one of 'plain' or 'keyring'.",
+      call. = FALSE
+    )
   }
 
   if (type == "keyring") {
@@ -48,7 +54,7 @@ registerToken <- function(token, type = "plain") {
       stop(paste0(
         "In order to use keyring type of token registration, please, ",
         "install 'keyring' package with `install.packages(\"keyring\")`."
-      ))
+      ), call. = FALSE)
     } else {
       suppressWarnings(
         keyring::key_set_with_value("OCEANBOLT_TOKEN", password = token)
