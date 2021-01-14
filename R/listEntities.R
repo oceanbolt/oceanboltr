@@ -55,15 +55,10 @@ listEntities <- function(entity = c(
   }
 
   # Queries API
-  response <- RETRY(
-    "GET",
+  response <- safeApiCall(
+    GET,
     url = paste0(baseApiUrl, "/entities/", entity),
-    add_headers(Authorization = paste0("Bearer ", token)),
-    timeout(as.numeric(Sys.getenv("OCEANBOLT_RETRY_TIMEOUT", unset = 30))),
-    times = as.numeric(Sys.getenv("OCEANBOLT_RETRY_TIMES", unset = 3)),
-    pause_base = as.numeric(Sys.getenv("OCEANBOLT_RETRY_PAUSE_BASE", unset = 1)),
-    pause_min = as.numeric(Sys.getenv("OCEANBOLT_RETRY_PAUSE_MIN", unset = 1)),
-    pause_cap = as.numeric(Sys.getenv("OCEANBOLT_RETRY_PAUSE_CAP", unset = 60))
+    add_headers(Authorization = paste0("Bearer ", token))
   )
 
   if (http_error(response)) {

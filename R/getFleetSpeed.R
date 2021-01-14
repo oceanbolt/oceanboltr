@@ -24,7 +24,7 @@
 #'
 #' @param excludeMpv Boolean, whether to exclude mpv vessels from the counts.
 #'
-#' @param token Oceanbolt API token, read from the environment by default
+#' @param token Oceanbolt API token, read from the environment by default.
 #'
 #' @details
 #' See \url{https://openapi.oceanbolt.com/#operation/getFleetSPeed} for details.
@@ -138,8 +138,8 @@ getFleetSpeed <- function(zoneId = 16,
   selectedSubSegments <- selectedSubSegments$subSegmentKey
 
   # Queries API
-  response <- RETRY(
-    "POST",
+  response <- safeApiCall(
+    POST,
     url = paste0(baseApiUrl, "/tonnage/speed"),
     add_headers(Authorization = paste0("Bearer ", token)),
     body = list(
@@ -151,12 +151,7 @@ getFleetSpeed <- function(zoneId = 16,
       excludeMpv = excludeMpv,
       format = "json"
     ),
-    encode = "json",
-    timeout(as.numeric(Sys.getenv("OCEANBOLT_RETRY_TIMEOUT", unset = 30))),
-    times = as.numeric(Sys.getenv("OCEANBOLT_RETRY_TIMES", unset = 3)),
-    pause_base = as.numeric(Sys.getenv("OCEANBOLT_RETRY_PAUSE_BASE", unset = 1)),
-    pause_min = as.numeric(Sys.getenv("OCEANBOLT_RETRY_PAUSE_MIN", unset = 1)),
-    pause_cap = as.numeric(Sys.getenv("OCEANBOLT_RETRY_PAUSE_CAP", unset = 60))
+    encode = "json"
   )
 
   if (http_error(response)) {

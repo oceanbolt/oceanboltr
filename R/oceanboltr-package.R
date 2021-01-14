@@ -3,9 +3,10 @@
 #'
 #' @keywords internal
 #'
-#' @importFrom data.table setDT
+#' @importFrom data.table setDT rbindlist
 #' @importFrom jsonlite fromJSON
-#' @importFrom httr RETRY add_headers http_error content status_code timeout
+#' @importFrom httr GET POST add_headers http_error content status_code timeout
+#' @importFrom httr headers
 "_PACKAGE"
 
 #' Base Oceanbolt API URL
@@ -30,9 +31,7 @@ baseApiUrl <- "https://beta.api.oceanbolt.com/v2"
   # Sets package settings
   Sys.setenv("OCEANBOLT_RETRY_TIMEOUT" = 30)
   Sys.setenv("OCEANBOLT_RETRY_TIMES" = 3)
-  Sys.setenv("OCEANBOLT_RETRY_PAUSE_BASE" = 10)
-  Sys.setenv("OCEANBOLT_RETRY_PAUSE_MIN" = 10)
-  Sys.setenv("OCEANBOLT_RETRY_PAUSE_CAP" = 90)
+  Sys.setenv("OCEANBOLT_RETRY_PAUSE" = 10)
 
   # Checks if API token was already registered with 'keyring'
   if (requireNamespace("keyring", quietly = TRUE)) {

@@ -40,7 +40,7 @@ directions are allowed: \code{in_port, at_sea}.}
 
 \item{excludeMpv}{Boolean, whether to exclude mpv vessels from the counts.}
 
-\item{token}{Oceanbolt API token, read from the environment by default}
+\item{token}{Oceanbolt API token, read from the environment by default.}
 }
 \value{
 Data.table with average fleet speed for different
