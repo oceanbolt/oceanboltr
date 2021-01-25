@@ -1,7 +1,12 @@
-#' Retrieves all the individual voyages for the given filter parameters.
-#' Response is paginated, and endpoint accepts a paging parameter to specify
-#' which page to return. It is also possible to set the number of voyages to
-#' return per query, default is 50 and maximum is 2000.
+#' Retrieves all summarized timeseries of exported volumes for the given filter
+#' parameters. It is possible to supple a range parameter to determine
+#' the interval of the timeseries returned (daily/weekly/monthly).
+#'
+#' @param range Determines the interval of the timeseries data. Allowed values
+#' are: \code{("daily", "weekly", "monthly", "yearly")}.
+#'
+#' @param group Determines the grouping of the timeseries data. Allowed values
+#' are: \code{"segment", "commodity", "commodity_group"}.
 #'
 #' @param commodity The commodity to get tradeflows for (get a list of all
 #' commodities with \code{\link{listCommodities}()}).
@@ -42,49 +47,41 @@
 #' @param excludeUnknownDestinations Determines whether or not to exclude
 #' voyages that have unknown destinations (default to \code{FALSE}).
 #'
-#' @param page The page number to retrieve of the response. If \code{NULL} all
-#' pages are returned.
-#'
-#' @param limit The number of voyages to retrieve per page (max is 2000, default
-#' is 50). This parameter makes sense only if \code{page} in no \code{NULL}.
-#'
 #' @param token Oceanbolt API token, read from the environment by default.
 #'
 #' @details
 #' See \url{https://openapi.oceanbolt.com/#operation/postTradeflowLadenLegs} for
 #' details.
 #'
-#' @return Data.table with trade flows.
+#' @return Data.table with trade flows timeseries.
 #'
 #' @examples
 #' \dontrun{
-#' tradeFlows <- getTradeFlows()
-#' tradeFlows
+#' tradeFlowsTimeseries <- getTradeFlowsTimeseries()
+#' tradeFlowsTimeseries
 #' }
 #'
 #' @export
-getTradeFlows <- function(commodity = c(
-                            "iron_ore_fines", "iron_ore_pellets",
-                            "iron_ore_unclassified", "magnetite"
-                          ),
-                          direction = c("export", "import"),
-                          imo = c(),
-                          segment = c(
-                            "shortsea", "handysize", "supramax",
-                            "panamax", "capesize"
-                          ),
-                          subSegment = c(),
-                          fromDate = as.Date("2020-01-01"),
-                          toDate = Sys.Date(),
-                          fromCountryCode = c(),
-                          toCountryCode = c(),
-                          fromRegion = c(),
-                          toRegion = c(),
-                          excludeIntraCountry = TRUE,
-                          excludeUnknownDestinations = FALSE,
-                          page = NULL,
-                          limit = 1000,
-                          token = Sys.getenv("OCEANBOLT_TOKEN")) {
+getTradeFlowsTimeseries <- function(
+  range = c("daily", "weekly", "monthly", "yearly"),
+  group = c("segment", "commodity", "commodity_group"),
+  commodity = c(
+    "iron_ore_fines", "iron_ore_pellets",
+    "iron_ore_unclassified", "magnetite"
+  ),
+  direction = c("export", "import"),
+  imo = c(),
+  segment = c("shortsea", "handysize", "supramax", "panamax", "capesize"),
+  subSegment = c(),
+  fromDate = as.Date("2020-01-01"),
+  toDate = Sys.Date(),
+  fromCountryCode = c(),
+  toCountryCode = c(),
+  fromRegion = c(),
+  toRegion = c(),
+  excludeIntraCountry = TRUE,
+  excludeUnknownDestinations = FALSE,
+  token = Sys.getenv("OCEANBOLT_TOKEN")) {
 
   # Due to NSE notes in R CMD check / devtools::check()
   `:=` <- `segmentKey` <- `subSegmentKey` <- NULL
@@ -99,6 +96,8 @@ getTradeFlows <- function(commodity = c(
   }
 
   # Unifies parameters letter cases and parameters' type
+  range <- tolower(range)
+  group <- tolower(group)
   commodity <- tolower(commodity)
   direction <- tolower(direction)
   segment <- tolower(segment)
@@ -111,6 +110,32 @@ getTradeFlows <- function(commodity = c(
   toRegion <- toupper(toRegion)
 
   # Checks parameters validity
+  if (length(range) >= 1) {
+    if ("monthly" %in% range) {
+      range <- "monthly"
+    } else {
+      range <- range[1]
+    }
+
+    if (!range %in% c("daily", "weekly", "monthly", "yearly")) {
+      stop(paste0(
+        "Not a valid range! Should be one of: ",
+        "('daily', 'weekly', 'monthly', 'yearly')."
+      ), call. = FALSE)
+    }
+  }
+
+  if (length(group) >= 1) {
+    group <- group[1]
+
+    if (!group %in% c("segment", "commodity", "commodity_group")) {
+      stop(paste0(
+        "Not a valid group! Should be one of: ",
+        "('segment', 'commodity', 'commodity_group')."
+      ), call. = FALSE)
+    }
+  }
+
   if (!all(commodity %in% unique(listCommodities()$commodityValue))) {
     stop(paste0(
       "Not a valid commodity! ",
@@ -209,73 +234,54 @@ getTradeFlows <- function(commodity = c(
   }
   selectedSubSegments <- selectedSubSegments$subSegmentKey
 
-  # Checks pagination settings
-  if (limit > 2000) {
-    limit <- 2000
-    warning(paste0(
-      "Maximum value of 'limit' is 2000, only 2000 results from the page ",
-      "will be requested."
+  # Queries API
+  response <- safeApiCall(
+    POST,
+    url = paste0(baseApiUrl, "/tradeflows/data/timeseries"),
+    add_headers(Authorization = paste0("Bearer ", token)),
+    body = list(
+      range = range,
+      group = group,
+      commodity = commodity,
+      direction = direction,
+      imo = imo,
+      subSegment = selectedSubSegments,
+      fromDate = fromDate,
+      toDate = toDate,
+      fromCountryCode = fromCountryCode,
+      toCountryCode = toCountryCode,
+      fromRegion = fromRegion,
+      toRegion = toRegion,
+      excludeIntraCountry = excludeIntraCountry,
+      excludeUnknownDestinations = excludeUnknownDestinations
+    ),
+    encode = "json"
+  )
+
+  if (http_error(response)) {
+    err <- content(response,
+                   as = "parsed", type = "application/json",
+                   encoding = "utf8"
+    )
+    stop(sprintf(
+      "Failed with HTTP code %d. Oceanbolt exit code %d - %s",
+      status_code(response), err$code, err$message
     ), call. = FALSE)
   }
 
-  queryAllPages <- FALSE
-  if (is.null(page)) {
-    page <- 1
-    queryAllPages <- TRUE
-  }
-
-  # Queries API
-  output <- list()
-  while (TRUE) {
-    response <- safeApiCall(
-      POST,
-      url = paste0(baseApiUrl, "/tradeflows/data/voyages"),
-      add_headers(Authorization = paste0("Bearer ", token)),
-      body = list(
-        commodity = commodity,
-        direction = direction,
-        imo = imo,
-        subSegment = selectedSubSegments,
-        fromDate = fromDate,
-        toDate = toDate,
-        fromCountryCode = fromCountryCode,
-        toCountryCode = toCountryCode,
-        fromRegion = fromRegion,
-        toRegion = toRegion,
-        excludeIntraCountry = excludeIntraCountry,
-        excludeUnknownDestinations = excludeUnknownDestinations,
-        page = page,
-        limit = limit
-      ),
-      encode = "json"
-    )
-
-    if (http_error(response)) {
-      err <- content(response,
-        as = "parsed", type = "application/json",
-        encoding = "utf8"
-      )
-      stop(sprintf(
-        "Failed with HTTP code %d. Oceanbolt exit code %d - %s",
-        status_code(response), err$code, err$message
-      ), call. = FALSE)
-    }
-
-    parsed <- content(response,
-      as = "text", type = "application/json",
-      encoding = "utf8"
-    )
-    parsed <- fromJSON(parsed)
-    output[[length(output) + 1]] <- parsed[["data"]]
-
-    if (!queryAllPages | page == parsed$maxPage) {
-      break
-    } else {
-      page <- page + 1
-    }
+  parsed <- content(response,
+                    as = "text", type = "application/json",
+                    encoding = "utf8"
+  )
+  parsed <- fromJSON(parsed)
+  if (length(parsed) == 0) {
+    output <- data.table(date = character(),
+                         value = integer(),
+                         group = character())
+  } else {
+    output <- setDT(parsed[["data"]])
   }
 
   # Post-processing of results
-  output <- setDT(rbindlist(output, use.names = TRUE, fill = TRUE))
-  output[]
+  output
 }

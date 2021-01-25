@@ -3,7 +3,7 @@
 #'
 #' @keywords internal
 #'
-#' @importFrom data.table setDT rbindlist
+#' @importFrom data.table setDT rbindlist data.table
 #' @importFrom jsonlite fromJSON
 #' @importFrom httr GET POST add_headers http_error content status_code timeout
 #' @importFrom httr headers
