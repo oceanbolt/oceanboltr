@@ -50,8 +50,9 @@
 #' @param token Oceanbolt API token, read from the environment by default.
 #'
 #' @details
-#' See \url{https://openapi.oceanbolt.com/#operation/postTradeflowLadenLegs} for
-#' details.
+#' See
+#' \url{https://openapi.oceanbolt.com/#operation/postTradeflowDailyTimeseries}
+#' for details.
 #'
 #' @return Data.table with trade flows timeseries.
 #'
@@ -63,28 +64,28 @@
 #'
 #' @export
 getTradeFlowsTimeseries <- function(
-                                    range = c("daily", "weekly", "monthly", "yearly"),
-                                    group = c("segment", "commodity", "commodity_group"),
-                                    commodity = c(
-                                      "iron_ore_fines", "iron_ore_pellets",
-                                      "iron_ore_unclassified", "magnetite"
-                                    ),
-                                    direction = c("export", "import"),
-                                    imo = c(),
-                                    segment = c("shortsea", "handysize", "supramax", "panamax", "capesize"),
-                                    subSegment = c(),
-                                    fromDate = as.Date("2020-01-01"),
-                                    toDate = Sys.Date(),
-                                    fromCountryCode = c(),
-                                    toCountryCode = c(),
-                                    fromRegion = c(),
-                                    toRegion = c(),
-                                    excludeIntraCountry = TRUE,
-                                    excludeUnknownDestinations = FALSE,
-                                    token = Sys.getenv("OCEANBOLT_TOKEN")) {
+  range = c("daily", "weekly", "monthly", "yearly"),
+  group = c("segment", "commodity", "commodity_group"),
+  commodity = c(
+    "iron_ore_fines", "iron_ore_pellets",
+    "iron_ore_unclassified", "magnetite"
+  ),
+  direction = c("export", "import"),
+  imo = c(),
+  segment = c("shortsea", "handysize", "supramax", "panamax", "capesize"),
+  subSegment = c(),
+  fromDate = as.Date("2020-01-01"),
+  toDate = Sys.Date(),
+  fromCountryCode = c(),
+  toCountryCode = c(),
+  fromRegion = c(),
+  toRegion = c(),
+  excludeIntraCountry = TRUE,
+  excludeUnknownDestinations = FALSE,
+  token = Sys.getenv("OCEANBOLT_TOKEN")) {
 
   # Due to NSE notes in R CMD check / devtools::check()
-  `:=` <- `segmentKey` <- `subSegmentKey` <- NULL
+  `segmentKey` <- `subSegmentKey` <- NULL
 
   # Checks options
   if (is.null(token)) {

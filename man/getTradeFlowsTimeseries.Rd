@@ -83,8 +83,9 @@ parameters. It is possible to supple a range parameter to determine
 the interval of the timeseries returned (daily/weekly/monthly).
 }
 \details{
-See \url{https://openapi.oceanbolt.com/#operation/postTradeflowLadenLegs} for
-details.
+See
+\url{https://openapi.oceanbolt.com/#operation/postTradeflowDailyTimeseries}
+for details.
 }
 \examples{
 \dontrun{

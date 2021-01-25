@@ -87,7 +87,7 @@ getTradeFlows <- function(commodity = c(
                           token = Sys.getenv("OCEANBOLT_TOKEN")) {
 
   # Due to NSE notes in R CMD check / devtools::check()
-  `:=` <- `segmentKey` <- `subSegmentKey` <- NULL
+  `segmentKey` <- `subSegmentKey` <- NULL
 
   # Checks options
   if (is.null(token)) {
