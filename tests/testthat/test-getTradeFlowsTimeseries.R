@@ -17,7 +17,9 @@ test_that("Parameters are handled correctly", {
 
   expect_identical(
     getTradeFlowsTimeseries(direction = c())[order(date, group)],
-    getTradeFlowsTimeseries(direction = c("export", "import"))[order(date, group)]
+    getTradeFlowsTimeseries(direction = c("export", "import"))[
+      order(date, group)
+    ]
   )
   expect_error(getTradeFlowsTimeseries(direction = "wrong_direction"))
 
@@ -30,11 +32,15 @@ test_that("Parameters are handled correctly", {
   expect_error(getTradeFlowsTimeseries(fromRegion = "WRONG"))
   expect_error(getTradeFlowsTimeseries(toRegion = "WRONG"))
   expect_true(
-    nrow(getTradeFlowsTimeseries(fromRegion = "BALTIC", fromCountryCode = "UA")) == 0
+    nrow(
+      getTradeFlowsTimeseries(fromRegion = "BALTIC", fromCountryCode = "UA")
+    ) == 0
   )
 
   expect_error(getTradeFlowsTimeseries(excludeIntraCountry = "wrong type"))
-  expect_error(getTradeFlowsTimeseries(excludeUnknownDestinations = "wrong type"))
+  expect_error(
+    getTradeFlowsTimeseries(excludeUnknownDestinations = "wrong type")
+  )
 
   expect_identical(
     getTradeFlowsTimeseries()[order(date, group)],

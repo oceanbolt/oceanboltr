@@ -63,25 +63,25 @@
 #'
 #' @export
 getTradeFlowsTimeseries <- function(
-  range = c("daily", "weekly", "monthly", "yearly"),
-  group = c("segment", "commodity", "commodity_group"),
-  commodity = c(
-    "iron_ore_fines", "iron_ore_pellets",
-    "iron_ore_unclassified", "magnetite"
-  ),
-  direction = c("export", "import"),
-  imo = c(),
-  segment = c("shortsea", "handysize", "supramax", "panamax", "capesize"),
-  subSegment = c(),
-  fromDate = as.Date("2020-01-01"),
-  toDate = Sys.Date(),
-  fromCountryCode = c(),
-  toCountryCode = c(),
-  fromRegion = c(),
-  toRegion = c(),
-  excludeIntraCountry = TRUE,
-  excludeUnknownDestinations = FALSE,
-  token = Sys.getenv("OCEANBOLT_TOKEN")) {
+                                    range = c("daily", "weekly", "monthly", "yearly"),
+                                    group = c("segment", "commodity", "commodity_group"),
+                                    commodity = c(
+                                      "iron_ore_fines", "iron_ore_pellets",
+                                      "iron_ore_unclassified", "magnetite"
+                                    ),
+                                    direction = c("export", "import"),
+                                    imo = c(),
+                                    segment = c("shortsea", "handysize", "supramax", "panamax", "capesize"),
+                                    subSegment = c(),
+                                    fromDate = as.Date("2020-01-01"),
+                                    toDate = Sys.Date(),
+                                    fromCountryCode = c(),
+                                    toCountryCode = c(),
+                                    fromRegion = c(),
+                                    toRegion = c(),
+                                    excludeIntraCountry = TRUE,
+                                    excludeUnknownDestinations = FALSE,
+                                    token = Sys.getenv("OCEANBOLT_TOKEN")) {
 
   # Due to NSE notes in R CMD check / devtools::check()
   `:=` <- `segmentKey` <- `subSegmentKey` <- NULL
@@ -260,8 +260,8 @@ getTradeFlowsTimeseries <- function(
 
   if (http_error(response)) {
     err <- content(response,
-                   as = "parsed", type = "application/json",
-                   encoding = "utf8"
+      as = "parsed", type = "application/json",
+      encoding = "utf8"
     )
     stop(sprintf(
       "Failed with HTTP code %d. Oceanbolt exit code %d - %s",
@@ -270,14 +270,16 @@ getTradeFlowsTimeseries <- function(
   }
 
   parsed <- content(response,
-                    as = "text", type = "application/json",
-                    encoding = "utf8"
+    as = "text", type = "application/json",
+    encoding = "utf8"
   )
   parsed <- fromJSON(parsed)
   if (length(parsed) == 0) {
-    output <- data.table(date = character(),
-                         value = integer(),
-                         group = character())
+    output <- data.table(
+      date = character(),
+      value = integer(),
+      group = character()
+    )
   } else {
     output <- setDT(parsed[["data"]])
   }

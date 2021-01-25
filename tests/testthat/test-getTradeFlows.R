@@ -25,8 +25,10 @@ test_that("Parameters are handled correctly", {
     nrow(getTradeFlows(fromDate = "2020-01-01", page = 1, limit = 50)) <= 50
   )
   expect_true(
-    nrow(getTradeFlows(fromDate = as.Date("2020-01-01"),
-                       page = 1, limit = 50)) <= 50
+    nrow(getTradeFlows(
+      fromDate = as.Date("2020-01-01"),
+      page = 1, limit = 50
+    )) <= 50
   )
   expect_error(getTradeFlows(toDate = "wrong_date"))
 
